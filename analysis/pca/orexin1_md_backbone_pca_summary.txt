@@ -1,0 +1,13 @@
+Backbone PCA summary
+
+Analysis group: Backbone
+Frames used: 1001
+PC1 variance explained: 20.80 %
+PC2 variance explained: 16.38 %
+PC3 variance explained: 10.82 %
+PC1+PC2 cumulative variance: 37.18 %
+PC1+PC2+PC3 cumulative variance: 48.00 %
+PC1 minimum projection: -3.007 at 76.9 ns
+PC1 maximum projection: 5.445 at 2.5 ns
+PC2 minimum projection: -4.582 at 1.0 ns
+PC2 maximum projection: 5.473 at 95.3 ns

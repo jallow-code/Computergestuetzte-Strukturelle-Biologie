@@ -1,0 +1,8 @@
+#include "toppar/forcefield.itp"
+#include "toppar/PROA.itp"
+
+[ system ]
+Protein
+
+[ molecules ]
+PROA 1

@@ -1,0 +1,112 @@
+---
+title: "Orexin 1 Receptor: System Setup and CHARMM-GUI Workflow"
+subtitle: "Introduction and reproducible membrane-protein preparation"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    transition: fade
+    incremental: false
+    chalkboard: false
+    controls: true
+    progress: true
+    preview-links: auto
+execute:
+  echo: false
+---
+
+## Why OX1R?
+
+- Orexin receptors are class A GPCRs activated by orexin neuropeptides and are central to arousal, sleep-wake regulation, stress, and motivated behavior.
+- OX1R and OX2R are closely related, but OX1R has been especially linked to reward, compulsive behavior, and addiction-related circuits.
+- That makes selective OX1R antagonists pharmacologically interesting, but selectivity is difficult because the two receptors have very similar orthosteric pockets.
+
+::: notes
+This is the biological motivation slide. Keep it short: two receptor subtypes, similar pockets, but different therapeutic interest. The structural problem is selectivity.
+:::
+
+## Structural Context from Rappas et al.
+
+- Rappas et al. compared multiple OX1R and OX2R co-structures to explain how ligands achieve subtype selectivity despite highly similar binding sites.
+- Their key conclusion is that selectivity is not controlled by one simple residue swap; it emerges from different ligand poses, lipophilic hotspots, and water-mediated interactions.
+- The structure used here is PDB `6TOS`: human OX1R in complex with the antagonist `GSK1059865`, resolved at `2.13 A`.
+- Starting from an experimental OX1R-ligand complex is important because it preserves the orthosteric binding mode that the MD system is meant to relax, not invent.
+
+::: notes
+Use this slide to connect the paper to the simulation. The paper gives the structural rationale; our MD setup takes one of those co-structures and embeds it in a membrane environment.
+:::
+
+## System Build: From Crystal Structure to MD Box
+
+Start from experimental structure [`data/raw/6tos.pdb`](/home/jallow/compstrucbio/project-work/data/raw/6tos.pdb), keep the bound antagonist, clean the complex in CHARMM-GUI, then embed it in a membrane and export to GROMACS.
+
+| Setup item | Choice used here |
+|---|---|
+| Input structure | `6TOS` (human OX1R + GSK1059865) |
+| Simulated ligand name | `NRE` |
+| Membrane | `228 POPC + 24 CHL1` |
+| Cholesterol fraction | `~9.5 mol%` |
+| Water model | CHARMM `TIP3P` |
+| Ions | `62 K+`, `76 Cl-` |
+| Final box | `~9.77 x 9.77 x 12.11 nm` |
+| Total atoms | `107603` |
+
+- Key practical point: ligand protonation, membrane composition, and ion setup matter more than cosmetic CHARMM-GUI options.
+- Semi-isotropic pressure coupling is required later because this is a membrane system with the bilayer normal along `Z`.
+
+::: notes
+This replaces the multiple setup slides. Present it as one clean workflow: crystal complex in, membrane-protein MD box out.
+:::
+
+## Equilibration Protocol: Relax Without Breaking the Starting Pose
+
+The CHARMM-GUI export uses one minimization plus six restrained MD stages. The logic is to let water, lipids, and ions reorganize first, then gradually free the protein-ligand complex.
+
+| Phase | Ensemble | dt | Length | Restraint trend | Purpose |
+|---|---|---|---|---|---|
+| 0 | Minimization | - | 5000 steps | Very strong | Remove packing clashes |
+| 1-2 | NVT | 1 fs | `125 + 125 ps` | Strong to moderate | Heat solvent and membrane around a nearly fixed complex |
+| 3 | NPT | 1 fs | `125 ps` | Moderate | Introduce pressure and let bilayer dimensions respond |
+| 4-6 | NPT | 2 fs | `500 + 500 + 500 ps` | Gradual release to near zero | Relax lipids, side chains, then backbone before production |
+
+- Backbone restraints decrease from `4000` to `50 kJ mol^-1 nm^-2`; lipid restraints go from `1000` to `0`.
+- Velocities are generated only once in step 1, then the run continues continuously through step 6.
+- The important idea is not the exact numbers alone, but the staged release: solvent first, membrane next, protein last.
+
+::: notes
+Slow down here. The audience should leave with one message: equilibration is part of model building, not an administrative pre-step.
+:::
+
+## Ready for Production MD
+
+After the final equilibration stage, the system is stable enough for unrestrained production MD.
+
+| Check | Observed value |
+|---|---|
+| Target temperature | `310.15 K` |
+| Average temperature | `310.2 K` |
+| Average pressure | `~ -0.14 bar` |
+| Average density | `1019 kg/m^3` |
+| Final box | `Box-X ~ 9.25 nm`, `Box-Z ~ 12.26 nm` |
+| Integration stability | Constraint RMSD remained small |
+
+- Standard settings throughout: CHARMM force field, `PME`, `1.2 nm` electrostatics cutoff, `v-rescale` thermostat, `LINCS`, and semi-isotropic `C-rescale` barostat from NPT onward.
+- Interpretation: the system is thermally stable, has completed the full restraint-release schedule, and is ready for production MD.
+
+::: notes
+Do not oversell convergence. Say the system is ready for production, not that the biology is converged.
+:::
+
+## Take-Home Message
+
+- The biological question comes from OX1R selectivity.
+- The simulation starts from an experimental OX1R antagonist co-structure, not a docked pose.
+- Reproducibility depends mainly on three choices:
+  - the bound ligand and its protonation,
+  - the POPC/cholesterol membrane composition,
+  - the full staged minimization and equilibration protocol.
+- In membrane-protein MD, equilibration is not administrative; it is part of the model-building process.
+
+::: notes
+End by tying structure, membrane context, and staged relaxation together.
+:::

@@ -1,0 +1,21 @@
+Production MD summary
+
+Protein backbone RMSD:
+  mean ± SD = 0.245 ± 0.036 nm
+  range = 0.000 to 0.378 nm
+  last frame = 0.225 nm
+
+Ligand RMSD (protein-fit):
+  mean ± SD = 0.311 ± 0.063 nm
+  range = 0.000 to 0.496 nm
+  last frame = 0.305 nm
+
+Protein radius of gyration:
+  mean ± SD = 2.302 ± 0.012 nm
+  range = 2.265 to 2.342 nm
+  last frame = 2.321 nm
+
+C-alpha RMSF:
+  mean ± SD = 0.114 ± 0.078 nm
+  range = 0.044 to 0.568 nm
+  last frame = 0.269 nm

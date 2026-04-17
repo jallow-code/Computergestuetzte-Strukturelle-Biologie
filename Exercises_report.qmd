@@ -1,0 +1,375 @@
+---
+title: "Report: UE zur computergestuetzten strukturellen Biologie"
+date: 'April 13, 2026'
+date-format: medium
+author:
+  - name: Jallow, Abdoulie
+    email: a51901416@unet.univie.ac.at
+format: 
+  pdf:
+    pdf-engine: xelatex
+    mainfont: TeX Gyre Pagella
+    sansfont: TeX Gyre Heros
+    include-in-header:
+      - text: |
+          \usepackage{microtype}
+          \usepackage{caption}
+          \captionsetup{format=plain, justification=justified, singlelinecheck=false}
+          \usepackage{sectsty}
+          \newfontfamily\headingfont{Arial} % <-- Replace "Arial" with your desired font
+          \allsectionsfont{\headingfont}
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    fig-pos: 'H'
+execute:
+  echo: false
+  warning: false
+editor: visual
+---
+
+\newpage
+
+## Day 1: Visual and Quantitative Analysis of MD Trajectories
+
+### Visualization of trajectories using VMD
+
+1.  How does your perception of the folding process change as you change the representation? Which representations do you find most useful? Now, try to visualize other trajectories in the TRAJ directory (labeled trajX.pdb).
+
+My perception of the folding process changes a lot with the representation. A line or backbone trace makes the global collapse easiest to see, a cartoon makes helix formation and packing easiest to see, and a surface or licorice view makes side-chain burial and packing defects much clearer.
+
+The most useful combination is cartoon/backbone for overall folding plus a transparent surface or licorice representation for the late-stage packing. CPK is useful occasionally, but it is too cluttered for following the whole trajectory.
+
+2.  Is there any order in the final stages of structure formation in 1BDD? Which helix tends to fold last?
+
+There is a partial order in the final stages of folding. The middle helix is the earliest and most persistent, the C-terminal helix is usually next, and the N-terminal helix tends to appear last.
+
+Using DSSP on the ten trajectories, the native helix corresponding to 1BDD residues 25-37 is already strongly formed at the start in almost every trajectory, the helix corresponding to residues 42-55 is also usually present early, and the helix corresponding to residues 10-19 has the lowest mean occupancy and the latest first-formation time. So the helix that tends to fold last is the N-terminal helix of the 1BDD three-helix bundle.
+
+3.  What happens with the size of the protein in its last stages of folding?
+
+In the last stages the protein generally becomes more compact.
+
+This is clearest in the folded endpoints: trajectories that end below the 3 Å RMSD cutoff have a mean final `Rg` of about `10.13 Å`, whereas the non-folded endpoints average about `10.53 Å`. The folded endpoints also have lower final SASA (`3726 Å^2` vs `~3949 Å^2`), so late folding is associated with compaction and burial.
+
+4.  How much variability is there between trajectories started from the same initial structure (say, trajectories 1-5)? How much between rajectories started from different starting structures (say, trajectory 1 and 9)?
+
+Trajectories started from the same initial structure are fairly similar, but not identical. Using the supplied pairwise backbone RMSDs against `traj1`, trajectories `1-5` stay around `0.34-0.43 nm` on average, with maxima below about `0.71 nm`.
+
+The difference between trajectories started from different starting structures is much larger. `traj9` relative to `traj1` has a mean backbone RMSD of about `0.97 nm`, more than twice the within-group value, so the starting structure still matters strongly at this timescale.
+
+5.  Does the folding mechanism you see here correspond more to the nucleation-condensation scheme (a small nucleus of native structure forms first and structure grows out of it) or diffusion-collision scheme (secondary structure forms first, and then assembles into a 3D fold)? Can one at all tell?
+
+What I see is closer to a diffusion-collision picture than to a clean nucleation-condensation picture, but only cautiously so.
+
+The reason is that secondary structure, especially the middle helix and usually the C-terminal helix, is already present or forms very early, and the later event is mostly tertiary packing and compaction. At the same time, the trajectories are short and heterogeneous enough that I would not claim a single unambiguous mechanism from this dataset alone.
+
+### Structural analysis
+
+6.  Does the output agree with your visual analysis?
+
+Yes, the quantitative output agrees with the visual analysis.
+
+Lower RMSD trajectories are also the ones with lower final `Rg` and lower final SASA, and the Ramachandran sampling is dominated by the right-handed alpha-helical region, which matches the visual impression of a compact three-helix bundle forming and fluctuating.
+
+7.  In which region of the Ramachandran plot do our structures cluster? Which secondary structure element you think this corresponds to?
+
+The structures cluster mainly in the right-handed alpha-helical region of the Ramachandran plot, around `phi ~ -60°` and `psi ~ -40° to -60°`.
+
+Across all valid `phi/psi` points, about `75.5%` fall in a broad right-handed alpha region, about `12.5%` in beta-like space, and only about `1.7%` in left-handed alpha space. This corresponds primarily to alpha helix, with loop/turn and occasional extended conformations contributing the rest.
+
+8.  How much of the accessible space do we sample in our simulations?
+
+We sample a noticeable amount of backbone conformational space, but far from all of it.
+
+On a coarse `10° x 10°` Ramachandran grid, the ensemble visits about `710/1296` bins, roughly `54.8%` of the full square. But the sampling is not uniform: it is heavily concentrated in alpha-helical space, so the ensemble explores loop/turn deviations around a helical fold rather than exhaustively sampling all accessible conformations.
+
+9.  What is the variability in SASA in starting structures? How about final structures? How much does SASA fluctuate along the trajectory?
+
+The SASA variability in the starting structures is moderate, and it is slightly larger in the final structures because some trajectories end compact and some end expanded.
+
+The starting SASA values have a standard deviation of about `158 Å^2`, while the final SASA values have a standard deviation of about `196 Å^2`. Along a trajectory, SASA fluctuates substantially: the average per-trajectory standard deviation is about `227 Å^2` with an average range of about `1178 Å^2`.
+
+10. What is the variability in Rgyr in starting structures? How about final structures? How much does Rgyr fluctuate along the trajectory?
+
+`Rg` is more variable in the starting structures than in the final structures.
+
+The starting `Rg` values have a standard deviation of about `0.73 Å`, while the final `Rg` values have a standard deviation of about `0.43 Å`. Along a trajectory, `Rg` still fluctuates clearly: the average per-trajectory standard deviation is about `0.61 Å`, with an average range of about `3.32 Å`.
+
+11. Is there any relationship between SASA and Rgyr?
+
+Yes. SASA and `Rg` are strongly positively related.
+
+The mean within-trajectory correlation between SASA and `Rg` is about `0.83`, so expanded structures tend to have both larger radius of gyration and larger solvent-exposed surface area, while compact structures have both smaller `Rg` and lower SASA.
+
+12. What is the variability in RMSD in starting structures? How about final structures? How much does RMSD fluctuate along the trajectory?
+
+RMSD is quite variable both at the start and at the end, because the ensemble contains multiple starting conformations and not all trajectories end in the same basin.
+
+The starting RMSD values have a standard deviation of about `2.61 Å`, and the final RMSD values still have a standard deviation of about `2.30 Å`. Along a trajectory, the average RMSD standard deviation is about `1.58 Å`, and the average range is about `6.32 Å`.
+
+13. If we take 3 Å as the cutoff for folding, what can you tell about the folding process?
+
+With `3 Å` as the folding cutoff, all ten trajectories cross into the folded basin at least once, but folding is often only transient.
+
+The first-passage times are `2.2, 4.4, 13.3, 13.4, 17.1, 18.8, 19.8, 20.7, 47.2, 78.0 ns`, with a mean of about `23.5 ns`. Only `4/10` trajectories are still below `3 Å` at the end, so the cutoff identifies repeated visits to the folded basin rather than irreversible folding.
+
+14. Once a molecule folds, does it stay there? How long does it take on average for a molecule from this ensemble of ten trajectories to fold? Remember that the trajectories we analyzed were picked as the ones that did fold within the simulated time. If the ten trajectories you have analyzed come from a set of 10000 similar trajectories, of which 9990 did not fold in an average time of 20 ns, what is your estimate for the folding rate of the molecule for this last step in the folding process? Does this agree with the overall measured folding time of 10 microseconds?
+
+No, once a molecule folds it does not reliably stay folded in this ensemble.
+
+None of the ten trajectories stays below `3 Å` for the entire remainder of the run after its first folding event. Four trajectories end below the cutoff, but every trajectory shows at least one re-expansion above the threshold. The average first-passage folding time is about `23.5 ns`.
+
+**Estimation Calculation**
+
+With `N = 10000`, `n = 10`, the ten observed first-passage times above, and `9990` non-folding trajectories censored at `20 ns`, I get
+
+$$
+\mathrm{MLE}
+=
+\frac{\sum_i t_i + \sum_j t_j}{n}
+\pm
+\frac{\sum_i t_i + \sum_j t_j}{n^{3/2}}
+=
+20.00 \pm 6.33~\mu s
+$$
+
+for the mean time of this final folding step.
+
+That corresponds to a rate of roughly
+
+$$
+k \approx \frac{1}{20.00~\mu s} \approx 5.0 \times 10^4~s^{-1}
+$$
+
+with an uncertainty range of about $(3.8-7.3) \cdot 10^4\;s^{-1}$. This is the same order of magnitude as an overall measured folding time of `10 microseconds` $(1 \cdot 10^5 s^{-1}$), but it is slower by roughly a factor of two, so I would call it broadly consistent rather than an exact match.
+
+\newpage
+
+## Day 2: Introduction to GROMACS
+
+### GROMACS force field
+
+1.  Using residue type database file aminoacids.rtp, find partial charges of atoms marked with an asterisk for the amino acids below.
+
+The marked atom for Tryptophan will the HE1
+
+`TRP` partial charges:
+
+| Atom |    Charge |
+|------|----------:|
+| N    | -0.427579 |
+| H    |  0.241716 |
+| CA   | -0.020082 |
+| HA   |  0.106629 |
+| CB   | -0.098364 |
+| HB1  |  0.065424 |
+| HB2  |  0.065424 |
+| CG   | -0.099797 |
+| CD1  | -0.174053 |
+| HD1  |  0.170633 |
+| NE1  | -0.298433 |
+| HE1  |  0.322375 |
+| CE2  |  0.141523 |
+| CZ2  | -0.210701 |
+| HZ2  |  0.125512 |
+| CH2  | -0.133022 |
+| HH2  |  0.119467 |
+| CZ3  | -0.164054 |
+| HZ3  |  0.119250 |
+| CE3  | -0.153992 |
+| HE3  |  0.123084 |
+| CD2  |  0.089641 |
+| C    |  0.584129 |
+| O    | -0.494730 |
+
+`ARG` partial charges:
+
+| Atom |    Charge |
+|------|----------:|
+| N    | -0.300879 |
+| H    |  0.233693 |
+| CA   | -0.131381 |
+| HA   |  0.053266 |
+| CB   |  0.036707 |
+| HB1  |  0.028012 |
+| HB2  |  0.028012 |
+| CG   |  0.012454 |
+| HG1  |  0.002964 |
+| HG2  |  0.002964 |
+| CD   |  0.126329 |
+| HD1  |  0.068148 |
+| HD2  |  0.068148 |
+| NE   | -0.464890 |
+| HE   |  0.326274 |
+| CZ   |  0.565543 |
+| NH1  | -0.685774 |
+| HH11 |  0.391052 |
+| HH12 |  0.391052 |
+| NH2  | -0.685774 |
+| HH21 |  0.391052 |
+| HH22 |  0.391052 |
+| C    |  0.730308 |
+| O    | -0.578332 |
+
+2.  Using various GROMOS (e.g. gromos43a1.ff) force field files, determine the length and force constant of the bonds highlighted in red.
+
+For `ILE` in `ExerciseMD/ForceFields/gromos43a1.ff/aminoacids.rtp`, the side-chain carbon-carbon bonds all use the same bond type, `gb_26`, from `ffbonded.itp`.
+
+The highlighted bond ($CH_{3}-CH_2$) is in side-chain branch bonds `(CA-CB, CB-CG1, CB-CG2, CG1-CD)`, and therefore all of them have:
+
+| Bond type | Length (nm) |    Force constant |
+|-----------|------------:|------------------:|
+| `gb_26`   |      0.1530 | $7.15 \cdot 10^6$ |
+
+For completeness, the distinct `ILE` bond types, including the marked carbonyl group in this force field are:
+
+| Bond                             | Type    | Length (nm) |    Force constant |
+|----------------------------------|---------|------------:|------------------:|
+| N-H                              | `gb_2`  |      0.1000 | $1.87 \cdot 10^7$ |
+| N-CA                             | `gb_20` |      0.1470 | $8.71 \cdot 10^6$ |
+| CA-C                             | `gb_26` |      0.1530 | $7.15 \cdot 10^6$ |
+| C-O                              | `gb_4`  |      0.1230 | $1.66 \cdot 10^7$ |
+| C-+N                             | `gb_9`  |      0.1330 | $1.18 \cdot 10^7$ |
+| CA-CB / CB-CG1 / CB-CG2 / CG1-CD | `gb_26` |      0.1530 | $7.15 \cdot 10^6$ |
+
+3.  What is the phenyl ring bond angle used in G45a3 force field?
+
+The phenyl-ring bond angle in `gromos45a3.ff` is `120.00°`.
+
+In `ExerciseMD/ForceFields/gromos45a3.ff/aminoacids.rtp`, the aromatic `PHE` ring angles use `ga_26`, and `ExerciseMD/ForceFields/gromos45a3.ff/ffbonded.itp` defines `ga_26` as `120.00` with force constant `560.00`.
+
+4.  Calculate the van der Waals radius and the well depth of the carbonyl oxygen atom for any Amber (e.g. amber99.ff) force field (or several of them).
+
+For the Amber carbonyl oxygen atom type `O` in `ExerciseMD/ForceFields/amber99.ff/ffnonbonded.itp`, GROMACS stores `sigma = 0.295992 nm` and `epsilon = 0.87864 kJ/mol`.
+
+The well depth is therefore `epsilon = 0.87864 kJ/mol`, which is about `0.21 kcal/mol`. Using the usual Lennard-Jones minimum convention, the minimum is at $r_{min} = 2^{(1/6)}$ `sigma = 0.33224 nm`, so the corresponding van der Waals radius is $\frac{r_{min}}{2}\;=\;0.16612\;nm = 1.661$ `Å`.
+
+\newpage
+
+5.  Assign names to all atoms in ornithine.
+
+For protonated ornithine, the atom names follow the lysine-like pattern but with one fewer methylene:
+
+`N, H, CA, HA, CB, HB1, HB2, CG, HG1, HG2, CD, HD1, HD2, NE, HE1, HE2, HE3, C, O`
+
+That is exactly how the local `amber03.ff/aminoacids.rtp` names the residue in its `[ ORN ]` entry.
+
+6.  Add ornithine to residue type database file. Make sure to include all bonds, angles, impropers and dihedrals. Are you required to alter the bonding or non-bonding parameter files?
+
+In this local force field, ornithine is already present: `ExerciseMD/ForceFields/amber03.ff/aminoacids.rtp` contains an `[ ORN ]` residue entry, and `ExerciseMD/ForceFields/amber03.ff/aminoacids.hdb` also contains `ORN`.
+
+So the practical answer is that no change to the bonded or non-bonded parameter files was required here. `ORN` reuses existing Amber atom types (`CT`, `N3`, `HC`, `HP`, `H`, `C`, `O`), so the standard bond, angle, dihedral, and non-bonded parameters can be generated from existing force-field definitions. If I were adding it from scratch, I would add the residue to `aminoacids.rtp` and the hydrogen-building entry to `aminoacids.hdb`; I would only touch bonded or non-bonded parameter files if I introduced a genuinely new atom type or a special torsion that existing types could not represent.
+
+### GROMACS file types
+
+7.  The choice of protonation sites can be very important in set-up for the simulation. Histidine can have two protonation sites: Nd (HID) and Ne (HIE). What are their corresponding residue names in GROMACS? Explore how you can use pdb2gmx to select protonation states of various amino acids.
+
+In the local Amber force field, the histidine residue names are exactly `HID` for protonation on `ND1`, `HIE` for protonation on `NE2`, and `HIP` for the doubly protonated form.
+
+`gmx pdb2gmx -h` shows that protonation can be selected interactively with flags such as `-his`, and `-inter` enables interactive protonation/tautomer selection for the relevant residue classes. The same help text also shows analogous interactive selection flags for Lys, Arg, Asp, Glu, and Gln.
+
+8.  Observe the format of the .mdp files used in your simulations. That is the file where a user defines the conditions mdrun algorithm will use. Pay attention to the output control. What quantities are outputted during a simulation? Try to figure out how you could keep parts of the system frozen while performing dynamics on others (e.g. dynamics of solvent around a frozen protein).
+
+From the supplied `.mdp` files, the main outputs written during the runs are coordinates, velocities, energies, logs, and in production a compressed coordinate trajectory.
+
+Specifically:
+
+| File | Output-control keywords |
+|---------------------|---------------------------------------------------|
+| `nvt.mdp` | `nstxout`, `nstvout`, `nstenergy`, `nstlog` |
+| `npt.mdp` | `nstxout`, `nstvout`, `nstenergy`, `nstlog` |
+| `md.mdp` | `nstenergy`, `nstlog`, `nstxout-compressed`, while `nstxout = 0`, `nstvout = 0`, `nstfout = 0` |
+
+To freeze part of the system, the standard `.mdp` mechanism is to define freeze groups with something like `freezegrps = Protein` and then specify the frozen dimensions with `freezedim = Y Y Y`. In practice that is how one would run solvent dynamics around a frozen protein.
+
+\newpage
+
+## Day 3: Analysis of MD Simulations
+
+1.  What does a water molecule do when it “floats” outside of the box? Also have a look at the original trajectory (md_0_1.xtc) that was not processed to account for the periodicity of the simulation box.
+
+When a water molecule appears to float outside the box, it is not actually escaping the system. It has crossed a periodic boundary and is being displayed as an image in a neighboring box.
+
+Physically, the molecule that leaves one side re-enters through the opposite side. The unprocessed trajectory makes this wrapping visible; the processed trajectory hides it by making molecules whole and re-centering the system.
+
+2.  Why do the original trajectories need to be processed before further analysis?
+
+The original trajectories need to be processed because periodic wrapping breaks visual continuity and can corrupt geometric analyses.
+
+Without processing, a protein can look artificially split across the box, solvent molecules can seem to jump discontinuously, and quantities like RMSD, RMSF, clustering, or average structures can become meaningless. Processing removes box jumps, recenters the system, and makes molecules whole.
+
+3.  Do the secondary structure and tertiary change in your simulation? What would happen in a longer simulation?
+
+From the restrained NPT trajectory, the secondary and tertiary structure change very little.
+
+The backbone RMSD stays around `0.0266 nm` on average, with a maximum of only `0.0295 nm`, and only `5/129` residues change DSSP class between the first and last frame. So there is no meaningful tertiary rearrangement in the available trajectory. In a longer unrestrained production simulation I would expect more loop and side-chain relaxation, but lysozyme should retain its overall fold.
+
+4.  Compare temperature and pressure to the reference values given in the .mdp files. Why do total energy and the volume not stay absolutely constant during the simulation? Why is it necessary to energy-minimize a crystal structure before running the simulation proper? Why are the protein coordinates position-restrained during the equilibration steps?
+
+The reference temperature is `298 K` in both `nvt.mdp` and `npt.mdp`, and the reference pressure in `npt.mdp` and `md.mdp` is `1.0 bar`.
+
+The extracted energies agree reasonably well with that:
+
+| Stage | Temperature | Pressure | Volume | Density |
+|---------------|--------------:|--------------:|--------------:|--------------:|
+| NVT | `299.48 K` | one instantaneous point: `-4666.9 bar` | not barostatted | not relevant |
+| NPT | `297.88 K` | $7.58 ± 126.74\;bar$ | $401.81 ± 0.97\;nm^3$ | $997.56 ± 2.41\;kg/m^3$ |
+| Production files available | one instantaneous frame only | `-32.9 bar` | `401.58 nm^3` | $998.13\;kg/m^3$ |
+
+The temperature is close to the target, and the pressure fluctuates strongly but averages near the right order of magnitude, which is normal for a finite system. Total energy is not absolutely constant because these simulations use thermostat and barostat coupling, so the system exchanges energy and volume with external baths. Energy minimization is necessary to remove steric clashes and huge initial forces from the crystal structure. Position restraints are used during equilibration so the solvent and box can relax around the protein without distorting the starting protein structure.
+
+5.  What was the minimal distance between periodic images? What happens if the minimal distance becomes shorter than the cut-off distance used for electrostatic interactions? Is it the case in your simulations?
+
+Using `gmx mindist -pi` on the available production frame, the minimal distance between periodic protein images is `3.43 nm`.
+
+If that distance became shorter than the nonbonded cutoff for electrostatics (`1.2 nm` here), the protein could interact directly with its own periodic image and produce strong artifacts. That is not the case here: `3.43 nm` is safely larger than `1.2 nm`.
+
+6.  Plot and have a look at the graph of the RMSF and identify the flexible and rigid regions. Visualize the average structure. Have a look at some of the side chains: what is the effect of averaging over conformations?
+
+Using the available restrained NPT trajectory, the most flexible residues are mostly glycines, loop residues, and the termini, while the most rigid residues are buried core residues in stable secondary-structure elements.
+
+The largest RMSF values occur around residues such as `Gly16`, `Gly22`, `Thr47`, `Gly49`, `Gly67`, `Gly71`, `Gly102`, `Gly104`, `Gly117`, `Gly126`, and the C-terminus. The smallest RMSF values occur for core residues such as `Thr40`, `Asp52`, `Tyr53`, `Trp63`, `Asn74`, `Ile78`, `Val92`, `Val99`, `Asn106`, and `Cys115`. Because these data come from a position-restrained equilibration, the absolute magnitudes are artificially small, but the flexible-vs-rigid pattern is still sensible. In an average structure, side chains look smeared or even nonphysical because different rotamers are averaged together into one coordinate set.
+
+7.  Briefly discuss the difference between the graphs against the starting structure and against the average structure. Which of the two is a better measure of convergence? Why is convergence important in MD simulations?
+
+RMSD against the starting structure and RMSD against the average structure answer slightly different questions.
+
+On the restrained NPT trajectory, the mean backbone RMSD to the starting structure is about `0.0266 nm`, while the mean RMSD to the average structure is about `0.0217 nm`. RMSD to the starting structure measures drift away from an arbitrary reference. RMSD to the average structure is usually the better measure of convergence within one sampled basin, because it measures fluctuations around what the trajectory is actually sampling. Convergence matters because without it, structural and thermodynamic observables remain biased by the initial condition.
+
+8.  Characterize solvent exposed residues and those that are not. What distinguishes them?
+
+The most solvent-exposed residues in the available structure are mainly charged or polar surface residues, while the least exposed residues are mostly hydrophobic core residues.
+
+The most exposed residues include `Arg128`, `Arg14`, `Arg45`, `Thr47`, `Arg73`, `Arg21`, `Arg114`, `Arg68`, `Arg125`, `Asn77`, and `Lys116`. The least exposed residues include `Ala9`, `Ala95`, `Cys64`, `Val29`, `Ser60`, `Leu17`, `Leu83`, `Trp28`, and `Thr40`. What distinguishes the two groups is exactly what one would expect: exposed residues tend to be charged or polar and tolerate water well, while buried residues tend to be hydrophobic and pack into the protein core.
+
+9.  Create a Ramachandran plot of the crystal structure of your protein and compare it to the Ramachandran plot of your trajectory. In which of the two can you observe or would expect outliers and why?
+
+The crystal structure and the trajectory both cluster mainly in favored alpha-helical and beta-sheet Ramachandran regions, but I would expect more outliers in a true unrestrained trajectory than in the crystal structure.
+
+For the local `1aki.pdb` crystal structure, a rough classification gives about `61.7%` alpha-like and `23.4%` beta-like torsions, with very few outliers. The restrained NPT trajectory looks very similar, which is not surprising because restraints suppress large backbone excursions. In a real production trajectory, transient outliers would most likely appear in flexible loop residues rather than in the structured core.
+
+10. Can you observe groups of frames that are more similar to each other than to the rest? What would that tell you about these frames?
+
+I do not see distinct groups of frames that are clearly separated into different conformational states.
+
+Using clustering on the restrained NPT trajectory, all `182` frames fall into a single cluster at a `0.10 nm` cutoff, and the pairwise RMSD values only span about `0.032-0.046 nm`. That indicates one dominant conformational basin with small fluctuations rather than multiple metastable states.
+
+11. The GROMACS package contains a program for clustering the frames of a simulation. Search for it in the online documentation, try to figure out how to use it and see if you can characterize distinct conformations in your trajectory?
+
+The clustering program is `gmx cluster`.
+
+A typical usage pattern is:
+
+``` bash
+gmx cluster 
+-s topol.tpr 
+-f traj.xtc 
+-method gromos 
+-cutoff 0.10 
+-sz clust-size.xvg 
+-clid clust-id.xvg 
+-g cluster.log
+```
+
+and one usually fits on `Backbone` or `C-alpha` before RMSD-based clustering. In the NPT trajectory, `gmx cluster` finds only one cluster, so I would characterize the sampled conformations as one stable state with small local fluctuations rather than several distinct conformers.

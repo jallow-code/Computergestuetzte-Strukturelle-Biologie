@@ -1,0 +1,29 @@
+Final equilibration window summary
+Source: /home/jallow/compstrucbio/project-work/analysis/6_equilibration_key_observables.csv
+Window: last 100 ps of the 500 ps stage-6 equilibration
+
+Temperature:
+  final 100 ps mean ± SD = 310.34 ± 1.19 K
+  last frame = 310.195 K
+  target = 310.150 K
+
+Pressure:
+  final 100 ps mean ± SD = 18.252 ± 102.872 bar
+  last frame = 34.520 bar
+  target = 1.000 bar
+
+Density:
+  final 100 ps mean ± SD = 1018.52 ± 1.30 kg/m^3
+  last frame = 1020.312 kg/m^3
+
+Potential Energy:
+  final 100 ps mean ± SD = -1007350.9 ± 1435.4 kJ/mol
+  last frame = -1008380.438 kJ/mol
+
+Box-X:
+  final 100 ps mean ± SD = 9.233 ± 0.010 nm
+  last frame = 9.236 nm
+
+Box-Z:
+  final 100 ps mean ± SD = 12.317 ± 0.023 nm
+  last frame = 12.286 nm
