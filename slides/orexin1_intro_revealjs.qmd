@@ -38,7 +38,7 @@ Use this slide to connect the paper to the simulation. The paper gives the struc
 
 ## System Build: From Crystal Structure to MD Box
 
-Start from experimental structure [`data/raw/6tos.pdb`](/home/jallow/compstrucbio/project-work/data/raw/6tos.pdb), keep the bound antagonist, clean the complex in CHARMM-GUI, then embed it in a membrane and export to GROMACS.
+Start from experimental structure [`data/raw/6tos.pdb`](../data/raw/6tos.pdb), keep the bound antagonist, clean the complex in CHARMM-GUI, then embed it in a membrane and export to GROMACS.
 
 | Setup item | Choice used here |
 |---|---|

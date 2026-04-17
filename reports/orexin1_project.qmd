@@ -25,8 +25,8 @@ execute:
   echo: false
   warning: false
 editor: visual
-bibliography: references.bib
-csl: nature-chemistry.csl
+bibliography: ../references/references.bib
+csl: ../styles/nature-chemistry.csl
 ---
 
 \newpage
@@ -37,7 +37,7 @@ The Orexin receptor system consists of two closely related Class A G-protein-cou
 
 However, achieving subtype selectivity between OX1R and OX2R is challenging due to their highly conserved orthosteric binding sites (@fig-subtype). Rappas et al.[@rappas2020] provided a structural comparison of several antagonist-bound co-structures, concluding that selectivity is driven by a combination of lipophilic hotspots, water-mediated interactions, and distinct ligand poses.
 
-![Subtype selectivity is difficult because the orthosteric pockets are highly conserved.](analysis/publication_figures/orexin_structures.png){#fig-subtype}
+![Subtype selectivity is difficult because the orthosteric pockets are highly conserved.](../analysis/publication_figures/orexin_structures.png){#fig-subtype}
 
 In this study, we utilize all-atom molecular dynamics (MD) simulations to explore the conformational landscape of the human OX1R in complex with the selective antagonist GSK1059865 (PDB: 6TOS). Beyond standard structural analysis, we apply the Mutual Information Expansion (MIE) framework via the `PARENT_GPU` software suite to estimate the configurational entropy of the receptor. Recent work has highlighted that configurational entropy, rather than enthalpy alone, can be a primary driver of ligand recognition and selectivity in GPCRs[@yang2024].
 
@@ -129,7 +129,7 @@ Before running the main production simulation, the system must be properly equil
 
 By the final 100 ps of the stage-6 equilibration, the key thermodynamic properties had stabilized, indicating that the system was ready for production data collection. The temperature remained close to the target value, averaging 310.34 ± 1.19 K, while the pressure showed the large instantaneous fluctuations expected for a system of this size but averaged 18.25 ± 102.87 bar around the 1 bar target. The density converged to 1018.52 ± 1.30 kg/m³, which is consistent with a well-equilibrated solvated lipid bilayer system. The potential energy stabilized around -1,007,351 kJ/mol without further downward drift, confirming that the system had become energetically relaxed. In parallel, the box dimensions in both the membrane plane and membrane normal direction plateaued, with Box-X near 9.23 nm and Box-Z near 12.32 nm, further supporting equilibration of the membrane-protein system.
 
-![Thermodynamic properties during the final stage of equilibration.](analysis/6_equilibration_publication_grid.pdf)
+![Thermodynamic properties during the final stage of equilibration.](../analysis/6_equilibration_publication_grid.pdf)
 
 ## Structural Stability
 
@@ -137,7 +137,7 @@ To determine if our simulated protein-drug complex is stable over time, we monit
 
 The 100 ns trajectory shows a highly stable complex. The protein backbone RMSD plateaued at roughly 0.25 nm, indicating that the receptor maintains its overall fold without significant distortion. Crucially, the ligand RMSD also remained low and stable, meaning the antagonist (GSK1059865) remained tightly bound within the orthosteric pocket throughout the simulation. The steady Radius of Gyration confirms the protein did not artificially unfold or expand.
 
-![Protein and Ligand RMSD over 100 ns.](analysis/publication_figures/figure_rmsd.png)
+![Protein and Ligand RMSD over 100 ns.](../analysis/publication_figures/figure_rmsd.png)
 
 | Metric                 | Mean ± SD     | Unit |
 |------------------------|---------------|------|
@@ -151,7 +151,7 @@ While RMSD looks at the whole protein, Root Mean Square Fluctuation (RMSF) tells
 
 As expected for a membrane protein, the residues forming the transmembrane helices (TM) show very minimal fluctuations (\< 0.1 nm), as they are tightly packed and restricted by the surrounding lipid bilayer. In contrast, the extracellular loops (ECL) and intracellular loops (ICL), which are exposed to the watery environment, exhibit much higher flexibility (@fig-rmsf). This pattern confirms that the simulation behavior is physically realistic.
 
-![C-alpha RMSF per residue.](analysis/publication_figures/figure_rmsf.png){#fig-rmsf}
+![C-alpha RMSF per residue.](../analysis/publication_figures/figure_rmsf.png){#fig-rmsf}
 
 ## Principal Component Analysis
 
@@ -161,13 +161,13 @@ Our PCA results (@fig-pca) summarize the essential dynamics of the receptor. The
 
 The PC Projections Over Time plot confirms that these large-scale motions do not drift continuously, but rather oscillate stably, characteristic of a well equilibrated structure. Finally, the Conformational Space (PC1 vs PC2) plot, colored by simulation time, illustrates that rather than moving randomly, the receptor remains confined to a stable conformational basin, confirming it is securely locked in its inactive state by the antagonist.
 
-![Comprehensive Principal Component Analysis (PCA) of the receptor backbone over the 100 ns trajectory.](analysis/pca/orexin1_md_backbone_pca_grid.pdf){#fig-pca}
+![Comprehensive Principal Component Analysis (PCA) of the receptor backbone over the 100 ns trajectory.](../analysis/pca/orexin1_md_backbone_pca_grid.pdf){#fig-pca}
 
 ## GPCR Activation Markers
 
 GPCRs like OX1R transmit signals by undergoing major shape changes. Specifically, the outward movement of transmembrane helix 6 (TM6) to create a binding site for G-proteins inside the cell. To verify whether our simulated receptor is in an active or inactive state, we monitored the distances between highly conserved amino acids known to move during activation: Arg144 (3.50), Arg293 (6.30), and Tyr358 (7.53).
 
-![Pairwise distances between conserved motifs (3.50, 6.30, 7.53).](analysis/publication_figures/figure_activation_markers.png)
+![Pairwise distances between conserved motifs (3.50, 6.30, 7.53).](../analysis/publication_figures/figure_activation_markers.png)
 
 Because GSK1059865 is an antagonist (a blocker), we expect it to hold the receptor in the inactive state. The stability of the TM3-TM6 (3.50-6.30) distance at approximately 1.06 nm confirms this; the helices remain close together, preventing G-protein binding. Interestingly, while many GPCRs are held inactive by a specific salt bridge called an ionic lock, OX1R lacks this feature (Arg293 is basic). Despite this, our distance analysis proves the receptor remains stably inactive, suggesting other interactions within the protein successfully maintain the closed TM3-TM6 conformation.
 
